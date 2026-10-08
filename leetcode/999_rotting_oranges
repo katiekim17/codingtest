@@ -1,0 +1,51 @@
+#### 너무너무 어려웠음. DFS인줄 알았더니 BFS 였던 문제.
+
+from collections import deque
+
+class Solution(object):
+    def orangesRotting(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
+        rows = len(grid)
+        cols = len(grid[0])
+        
+        queue = deque()
+        fresh_oranges = 0
+        
+        # 1. 초기 상태 파악: 상한 오렌지 위치를 큐에 넣고, 싱싱한 오렌지 개수 세기
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] == 2:
+                    queue.append((r, c)) # 상한 오렌지 좌표 저장
+                elif grid[r][c] == 1:
+                    fresh_oranges += 1   # 싱싱한 오렌지 개수 증가
+                    
+        # 만약 처음부터 싱싱한 오렌지가 없다면 0분 소요
+        if fresh_oranges == 0:
+            return 0
+            
+        minutes = 0
+        # 상하좌우 방향 배열
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        
+        # 2. BFS 탐색 시작 (큐에 상한 오렌지가 있고, 싱싱한 오렌지가 남아있는 동안 반복)
+        while queue and fresh_oranges > 0:
+            minutes += 1
+            # 현재 분(minute)에 퍼질 수 있는 상한 오렌지들을 모두 처리
+            for _ in range(len(queue)):
+                r, c = queue.popleft()
+                
+                # 사방 탐색
+                for dr, dc in directions:
+                    nr, nc = r + dr, c + dc
+                    
+                    # 격자 범위 내에 있고, 싱싱한 오렌지(1)를 만난 경우
+                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+                        grid[nr][nc] = 2  # 오렌지를 오염시킴
+                        fresh_oranges -= 1 # 싱싱한 오렌지 수 감소
+                        queue.append((nr, nc)) # 다음 단계 탐색을 위해 큐에 추가
+                        
+        # 3. 모든 탐색이 끝났는데도 싱싱한 오렌지가 남아있다면 -1, 다 썩었다면 걸린 시간 반환
+        return minutes if fresh_oranges == 0 else -1
