@@ -21,6 +21,7 @@ leetcode/    # 릿코드
 cd ~/Documents/GitHub/codingtest
 git add .
 git commit -m "solve: 프로그래머스 12345"
+git commit -m "solve: leetcode 12345"
 git push
 ```
 
